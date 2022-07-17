@@ -46,7 +46,7 @@ import time
 #------------------------------------------------------------------------
 from gramps.gen.display.name import displayer as name_displayer
 import gramps.gen.datehandler
-from gramps.gen.lib import ChildRefType
+from gramps.gen.lib import ChildRefType,AttributeType
 from gramps.gen.lib.date import Date
 from gramps.gen.plug import docgen
 from gramps.gen.plug.report import Report, MenuReportOptions
@@ -277,6 +277,11 @@ class PersonBox:
                         death_event = self.report.database.get_event_from_handle(handle)
                         death_str = self.getDatePlace(death_event) # gramps.gen.datehandler.get_date(death_event)
             self.line += "\nd. " + str(death_str)
+
+            attribs = self.person.get_attribute_list() #self.person.get_text_data_list()
+            for attr in attribs:
+                if int(attr.get_type()) == AttributeType.OCCUPATION:
+                    self.line += "\nprof: " + str(attr)
 
         return self.line
 
