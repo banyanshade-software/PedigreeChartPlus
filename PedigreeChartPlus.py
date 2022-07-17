@@ -226,6 +226,9 @@ class PersonBox:
             return
         date = gramps.gen.datehandler.get_date(event)
         place = place_displayer.display_event(self.report.database, event)
+        if not place:
+            return date
+        place = place.split(",")[0]
         return date + " ("+place+")"
         
     def getLines(self, refresh=False):
