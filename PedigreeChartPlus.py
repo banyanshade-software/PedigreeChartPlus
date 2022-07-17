@@ -221,6 +221,13 @@ class PersonBox:
         name = fontscale.string_trim(self.report.get_font(self.style_name), name, width)
         return name
 
+    def getDatePlace(self, event):
+        if not event:
+            return
+        date = gramps.gen.datehandler.get_date(event)
+        place = place_displayer.display_event(self.report.database, event)
+        return date + " ("+place+")"
+        
     def getLines(self, refresh=False):
         """Return a string with the information for this person.
 
@@ -235,20 +242,18 @@ class PersonBox:
         if self.line is None or refresh:
             self.line = self.getName()
 
-            birth_date = _PLACEHOLDER
-            birth_place = _PLACEHOLDER
+            birth_str = _PLACEHOLDER
             birth_ref = self.person.get_birth_ref()
             if birth_ref is not None:
                 for e_type, handle in birth_ref.get_referenced_handles():
                     if e_type == 'Event':
                         birth_event = self.report.database.get_event_from_handle(handle)
-                        birth_date = gramps.gen.datehandler.get_date(birth_event)
-                        birth_place = place_displayer.display_event(self.report.database, birth_event)
-            self.line += "\nb. " + str(birth_date) + " (" + birth_place + ")"
+                        birth_str = self.getDatePlace(birth_event)
+            self.line += "\nb. " + str(birth_str)
 
             if not self.isMother():
                 # we don't repeat this information for the mother
-                relationship_date = _PLACEHOLDER
+                relationship_str = _PLACEHOLDER
                 all_families = self.person.get_family_handle_list()
                 if len(all_families) > 0:
                     family = self.report.database.get_family_from_handle(all_families[0])
@@ -258,18 +263,17 @@ class PersonBox:
                         # Check for a marriage event
                         evt_t = evt.get_type()
                         if evt_t.is_marriage() or evt_t.is_marriage_fallback():
-                            relationship_date = gramps.gen.datehandler.get_date(evt)
-                            relationship_place  = gramps.gen.datehandler.get_date(evt)
-                self.line += "\nm. " + str(relationship_date)
+                            relationship_str = self.getDatePlace(evt) #gramps.gen.datehandler.get_date(evt)
+                self.line += "\nm. " + str(relationship_str)
 
-            death_date = _PLACEHOLDER
+            death_str = _PLACEHOLDER
             death_ref = self.person.get_death_ref()
             if death_ref is not None:
                 for e_type, handle in death_ref.get_referenced_handles():
                     if e_type == 'Event':
                         death_event = self.report.database.get_event_from_handle(handle)
-                        death_date = gramps.gen.datehandler.get_date(death_event)
-            self.line += "\nd. " + str(death_date)
+                        death_str = self.getDatePlace(death_event) # gramps.gen.datehandler.get_date(death_event)
+            self.line += "\nd. " + str(death_str)
 
         return self.line
 
