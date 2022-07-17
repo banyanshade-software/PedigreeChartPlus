@@ -55,6 +55,8 @@ from gramps.gen.plug.menu import BooleanOption, NumberOption, PersonOption
 from gramps.gen.plug.report.utils import pt2cm, cm2pt
 #from gen.plug.menu import TextOption
 from gramps.gen.const import GRAMPS_LOCALE as glocale
+from gramps.gen.display.place import displayer as place_displayer
+
 try:
     _trans = glocale.get_addon_translator(__file__)
 except ValueError:
@@ -234,13 +236,15 @@ class PersonBox:
             self.line = self.getName()
 
             birth_date = _PLACEHOLDER
+            birth_place = _PLACEHOLDER
             birth_ref = self.person.get_birth_ref()
             if birth_ref is not None:
                 for e_type, handle in birth_ref.get_referenced_handles():
                     if e_type == 'Event':
                         birth_event = self.report.database.get_event_from_handle(handle)
                         birth_date = gramps.gen.datehandler.get_date(birth_event)
-            self.line += "\nb. " + str(birth_date)
+                        birth_place = place_displayer.display_event(self.report.database, birth_event)
+            self.line += "\nb. " + str(birth_date) + " (" + birth_place + ")"
 
             if not self.isMother():
                 # we don't repeat this information for the mother
@@ -255,6 +259,7 @@ class PersonBox:
                         evt_t = evt.get_type()
                         if evt_t.is_marriage() or evt_t.is_marriage_fallback():
                             relationship_date = gramps.gen.datehandler.get_date(evt)
+                            relationship_place  = gramps.gen.datehandler.get_date(evt)
                 self.line += "\nm. " + str(relationship_date)
 
             death_date = _PLACEHOLDER
