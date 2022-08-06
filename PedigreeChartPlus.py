@@ -508,7 +508,9 @@ class PedigreeChartPlus(Report):
 
                 (x, y) = person_box.getPos()
                 (w, h) = person_box.getSize()
-                self.doc.draw_box(person_box.style_name, person_box.getLines(), x, y, w, h)
+                lines = person_box.getLines()
+                print("--------- doc : " + str(self.doc))
+                self.doc.draw_box(person_box.style_name, lines, x, y, w, h)
 
                 # show a page link if it's there
                 link_text = page_links.getLink(person_box.person_handle)
