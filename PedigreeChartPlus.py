@@ -510,20 +510,22 @@ class PedigreeChartPlus(Report):
                 (w, h) = person_box.getSize()
                 lines = person_box.getLines()
                 print("--------- doc : " + str(self.doc))
+                print(lines)
+                print(f'style: {person_box.style_name}')
                 # -- get notes and see if this was imported and should be grayed
                 notes = person_box.person.get_note_list()
                 print(f'notes={notes}')
-                gray = False
+                style = person_box.style_name
                 for n in notes:
                     note = self.database.get_note_from_handle(n)
                     print(note)
                     print(f'note id : {note.get_gramps_id()}')
                     if note.get_gramps_id() == 'N9999':
                         print('------ gray!')
-                        gray = True
+                        style = 'PC-gray' 
                         break
 
-                self.doc.draw_box(person_box.style_name, lines, x, y, w, h)
+                self.doc.draw_box(style, lines, x, y, w, h)
 
                 # show a page link if it's there
                 link_text = page_links.getLink(person_box.person_handle)
@@ -708,6 +710,13 @@ class PedigreeChartPlusOptions(MenuReportOptions):
         #g.set_shadow(1, 0.2)
         g.set_fill_color((255, 255, 255))
         default_style.add_draw_style("PC-box", g)
+
+        #special style for N9999 (unverified)
+        g = docgen.GraphicsStyle()
+        g.set_paragraph_style("PC-Normal")
+        #g.set_shadow(1, 0.2)
+        g.set_fill_color((140, 140, 110))
+        default_style.add_draw_style("PC-gray", g)
 
         g = docgen.GraphicsStyle()
         g.set_paragraph_style("PC-Title")
