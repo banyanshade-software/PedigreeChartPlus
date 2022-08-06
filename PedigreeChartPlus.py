@@ -510,6 +510,19 @@ class PedigreeChartPlus(Report):
                 (w, h) = person_box.getSize()
                 lines = person_box.getLines()
                 print("--------- doc : " + str(self.doc))
+                # -- get notes and see if this was imported and should be grayed
+                notes = person_box.person.get_note_list()
+                print(f'notes={notes}')
+                gray = False
+                for n in notes:
+                    note = self.database.get_note_from_handle(n)
+                    print(note)
+                    print(f'note id : {note.get_gramps_id()}')
+                    if note.get_gramps_id() == 'N9999':
+                        print('------ gray!')
+                        gray = True
+                        break
+
                 self.doc.draw_box(person_box.style_name, lines, x, y, w, h)
 
                 # show a page link if it's there
