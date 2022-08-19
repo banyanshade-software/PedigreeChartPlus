@@ -279,9 +279,17 @@ class PersonBox:
             self.line += "\nd. " + str(death_str)
 
             attribs = self.person.get_attribute_list() #self.person.get_text_data_list()
+            prof = None
             for attr in attribs:
+                print(f'attrib : {attr.get_type()}, {int(attr.get_type())}, val {str(attr)}')
                 if int(attr.get_type()) == AttributeType.OCCUPATION:
-                    self.line += "\nprof: " + str(attr)
+                    prof = str(attr)
+                elif int(attr.get_type()) == AttributeType.CUSTOM:
+                    print(f'custom: {type(attr.get_type())}, {str(attr.get_type())}')
+                    if str(attr.get_type()) == "Occupation" and prof is not None:
+                        prof = str(attr)
+            if prof is not None:
+                self.line += "\nprof: " + prof
 
         return self.line
 
